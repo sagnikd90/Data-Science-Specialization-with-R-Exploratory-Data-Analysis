@@ -1,0 +1,256 @@
+---
+title: "Exploratory Data Analysis Week One"
+author: "Sagnik Das"
+date: "6/2/2020"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Exploratory Graphics Part-1:Week-1
+
+
+```{r}
+setwd("C:\\Users\\das90\\OneDrive\\Coursera courses\\John Hopkins\\R Codes and Files\\Data-Science-Specialization-with-R-Exploratory-Data-Analysis")
+
+
+```
+
+### Exploratory Graphs:Part-1
+
+```{r}
+
+pollution<- as.data.frame(read.csv("C:\\Users\\das90\\OneDrive\\Coursera courses\\John Hopkins\\R Codes and Files\\Exploratory Data Analysis\\PM25data\\data\\avgpm25.csv"))
+head(pollution)
+names(pollution)
+
+```
+The national average for pm25 is 12 micrograms. We want to see for how many counties the pm25 exceeds the national average.
+
+First we check the summary statistics of the variable we are concerned with:
+
+```{r}
+summary(pollution$pm25)
+
+```
+
+
+To visualize the data graphically, we can use multiple methods.
+
+First let us visualize it using a simple boxplot.
+
+```{r}
+
+boxplot(pollution$pm25,col = "blue")
+
+```
+
+Now we can plot a histogram for the same data.
+
+```{r}
+hist(pollution$pm25,breaks = 100,col = "red") 
+rug(pollution$pm25)
+
+```
+ Now we will look at how to plot 2 dimensional data. The following is a simple boxplot of the variable pm25, plotted over regions:
+ 
+ 
+```{r}
+ 
+boxplot(pm25~region,data=pollution,col="green") 
+ 
+``` 
+
+Now we will plot the same data using multiple histograms:
+
+
+```{r}
+par(mfrow = c(2,1))
+hist(subset(pollution,region=="east")$pm25,breaks = 100,col = "blue")
+hist(subset(pollution,region=="west")$pm25,breaks = 100,col = "blue")
+
+```
+
+
+### Scatter Plot
+
+Now we will use the data to do some scatter plots:
+
+```{r}
+with(pollution,plot(latitude,pm25))
+abline(h=12,lwd=2,lty=3)
+
+```
+
+We can use the color option to have a different colour for the scatter for different regions.
+
+```{r}
+
+with(pollution,plot(latitude,pm25,col=c("red","blue")))
+abline(h=12,lwd=2,lty=3)
+
+```
+
+
+Let us now do a multiple scatterplot. A scatter for each region.
+
+```{r}
+
+par(mfrow=c(1,2), mar=c(5,4,2,1))
+with(subset(pollution,region=="west"), plot(latitude,pm25,main = "west"))
+with(subset(pollution,region=="east"), plot(latitude,pm25,main = "east"))
+
+
+```
+
+
+### Using the Base Plotting System
+
+
+```{r}
+
+df<-datasets::cars
+with(df, plot(speed,dist))
+```
+
+### Using the Lattic Plotting System
+
+
+```{r}
+install.packages("lattice")
+library(lattice)
+
+xyplot(pm25~latitude|region,data = pollution,layout=c(2,1))
+```
+
+###Using ggplot2
+
+```{r}
+install.packages("ggplot2")
+library(ggplot2)
+
+cars= datasets::mtcars
+names(cars)
+qplot(mpg,disp,data=cars)
+```
+
+### Base Plotting System: A detailed look at the Base Plotting System
+
+
+Let us start with a simple Histogram:
+
+
+```{r}
+library(datasets)
+hist(airquality$Ozone)
+
+```
+
+Let us now loot at a simple scatter plot:
+
+
+```{r}
+
+with(airquality,plot(Wind,Ozone))
+
+```
+
+Now we will look at how to do a Boxplot by using a factor variable.
+
+```{r}
+airquality<- transform(airquality,Month=factor(Month))
+boxplot(Ozone~Month,airquality,xlab = "Month",ylab = "Ozone(ppb)")
+
+
+```
+
+
+Let us now see how to add a title to a base plot:
+
+````{r}
+with(airquality,plot(Wind,Ozone))
+title(main = "Ozone and Wind in New York City")
+
+```
+
+Now let us plot the same base plot with more annotattions.
+
+```{r}
+with(airquality,plot(Wind,Ozone), main = "Ozone and Wind in New York City")
+with(subset(airquality,Month==5), points(Wind,Ozone,col="blue"))
+
+
+```
+
+Now let us add further annotations like label and legends:
+
+
+```{r}
+with(airquality,plot(Wind,Ozone), main = "Ozone and Wind in New York City",type="n")
+with(subset(airquality,Month==5), points(Wind,Ozone,col="blue"))
+with(subset(airquality,Month!=5), points(Wind,Ozone,col="red"))
+legend("topright", pch = 1,col = c("blue", "red"), legend = c("May", "Other Months"))
+```
+
+Now we look at a base plot with a regression line:
+
+```{r}
+with(airquality,plot(Wind,Ozone, main = "Ozone and Wind in New York City",pch=20))
+model<- lm(Ozone~Wind,airquality)
+abline(model,lwd=2)
+
+
+```
+
+Plotting multiple base plots:
+
+```{r}
+names(airquality)
+par(mfrow=c(1,2))
+with(airquality,{
+  plot(Wind,Ozone,main = "Ozone and Wind")
+  plot(Solar.R,Ozone,main = "Ozone and Solar Radiation")
+})
+
+
+```
+
+Adding further annotations:
+
+```{r}
+par(mfrow=c(1,3), mar=c(4,4,2,1), oma=c(0,0,2,0))
+with(airquality,{
+  plot(Wind,Ozone,main = "Ozone and Wind")
+  plot(Solar.R,Ozone,main = "Ozone and Solar Radiation")
+  plot(Temp,Ozone,main = "Ozone and Temperature")
+  mtext("Ozone and weather in New York City", outer=TRUE)
+})
+
+
+```
+
+### Using Graphics Devices
+
+
+Now we will learn how to use the different graphic devices of R:
+
+```{r}
+pdf(file = "Plot1 Week 1.pdf")
+par(mfrow=c(1,3), mar=c(4,4,2,1), oma=c(0,0,2,0))
+with(airquality,{
+  plot(Wind,Ozone,main = "Ozone and Wind")
+  plot(Solar.R,Ozone,main = "Ozone and Solar Radiation")
+  plot(Temp,Ozone,main = "Ozone and Temperature")
+  mtext("Ozone and weather in New York City", outer=TRUE)
+})
+
+
+```
+
+
+
+
+
