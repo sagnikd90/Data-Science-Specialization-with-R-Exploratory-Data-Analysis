@@ -1,0 +1,138 @@
+---
+title: "GGPlot2 Codes"
+author: "Sagnik Das"
+date: "6/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+In this module, we will learn about the ggplot2 model:
+
+
+```{r}
+
+library(ggplot2)
+
+```
+
+Let us call an inbuilt dataset that comes with the ggplot2 package:
+
+```{r}
+str(mpg)
+names(mpg)
+```
+
+Let us start with the simplest of ggplot which is the qplot. We want to see the relationship between the variables hwy and displ:
+
+```{r}
+
+qplot(displ,hwy,data = mpg)
+
+```
+
+Now suppose we want to plot the same graph but we want to differentiate between the observations based on the factor variable drv. We want to see different colors for the different values of the factor variables:
+
+```{r}
+
+qplot(displ,hwy,data = mpg,color=drv)
+
+```
+
+Now in the same graph, we want to add a smoothed out trend line. The code to do that is as follows:
+
+```{r}
+
+qplot(displ,hwy,data = mpg,geom = c("point","smooth"))
+
+```
+
+Let us now focus on a simple histogram. We want to plot a simple histogram of the variable hwy and separate the data according to the factor variable drv. The code to do so is as follows:
+
+
+```{r}
+qplot(hwy,data = mpg,fill=drv)
+
+```
+
+Now suppose we want to see the relationship between the variable displ and hwy, but we want to see it separetely for the different values of the factor variable drv. The factor variable drv has three values.
+
+Let us first look at the plots, plotted in different panels according to the values of the factor variable, aligned in one row. The code to do that is as follows:
+
+
+```{r}
+
+qplot(displ,hwy,data = mpg,facets = .~drv)
+
+```
+
+Now suppose we want to see the same histogram of hwy, plotted in a columnwise alignment:
+
+
+```{r}
+
+qplot(hwy,data = mpg,facets = drv~.,binwidth=2)
+
+
+```
+
+Now let us read the MAACS dataset into R. The dataset is saved in a rds format. So we need to first call the dataset into R and then convert it into a dataframe:
+
+```{r}
+
+env<- readRDS("C:\\Users\\das90\\OneDrive\\Coursera courses\\John Hopkins\\R Codes and Files\\Exploratory Data Analysis\\Data-Science-Specialization-with-R-Exploratory-Data-Analysis\\maacs_env.rds")
+
+maacs<- as.data.frame(env)
+head(maacs)
+names(maacs)
+str(maacs)
+
+```
+
+Now suppose we want to plot the histogram of the variable no2. The following code would help to do it:
+
+```{r}
+
+qplot(log(no2),data = maacs,binwidth=0.2,na.rm=TRUE)
+
+```
+
+Since we don't have factor variable in the data, let us create one factor variable:
+
+```{r}
+dim(maacs)
+mopos=rep(0:1,each=375)
+mopos<- factor(mopos,labels = c("yes","no"))
+```
+
+Now we want to plot the histogram of the variable no2 and separate them accroding to the factor variable mopos.The code to do this is as follows:
+
+
+```{r}
+
+qplot(log(no2),data = maacs,fill=mopos, na.rm=TRUE)
+
+```
+
+Now suppose we want to do a density plot. Firstly, we want to simply see the density plot of no2. The code to do that is as follows:
+
+```{r}
+qplot(log(no2), data = maacs, geom = "density",na.rm=TRUE)
+
+```
+
+Now we want to plot the same density function, but we want to separate them according to the factor variable mopos. The code to do so is:
+
+```{r}
+
+qplot(log(no2), data = maacs, geom = "density",color=mopos,na.rm=TRUE)
+
+```
+
+
+
+
+
