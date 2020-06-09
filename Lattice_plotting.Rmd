@@ -1,0 +1,111 @@
+---
+title: 'Exploratory Data Analysis: Week 2;Codes'
+author: "Sagnik Das"
+date: "6/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### Lattice Plotting System
+
+
+Let practice some plotting with the lattice package:
+
+We start with a very simple example.
+
+
+```{r}
+
+library(datasets)
+library(lattice)
+
+df<- datasets::airquality
+
+xyplot(Ozone~Wind, data = df)
+
+```
+
+Now let us do a more complex graph with multiple panels:
+
+
+```{r}
+
+table(df$Month)
+
+```
+
+So we have 5 months of data and we want to see the relationship between Ozone and Wind for the 5 months separetly and we want to plot the data in one panel.
+
+In order to do that, we first need to transform the month variable into a factor variable. The following codes does that:
+
+```{r}
+airquality<- transform(airquality,Month=factor(Month))
+
+
+```
+
+Now we cal get the plot we want:
+
+
+```{r}
+
+xyplot(Ozone~Wind|Month,data = airquality,layout=c(5,1))
+
+```
+
+Now let us plot a lattice graph over two panel. In order to do that we are going to generate some data. The following are the codes to generate the data:
+
+```{r}
+set.seed(10)
+x<-rnorm(100)
+f<-rep(0:1,each=50)
+y<- x+f-x*f+rnorm(100,sd=0.6)
+f<- factor(f,labels = c("Group1","Group2"))
+
+```
+
+
+Now let us plot the data over two panels:
+
+
+```{r}
+
+xyplot(y~x|f, layout=c(2,1))
+
+
+```
+
+
+Let us now plot the same graph with a bit more customization. Basically what we want to do is add a horizontal line through the median of the two datasets contained in the two panels. The code to do is given as follows:
+
+
+```{r}
+xyplot(y~x|f, panel = function(x,y,...){
+  
+  panel.xyplot(x,y,...)
+  panel.abline(h=median(y), lty=3)
+
+})
+
+
+```
+
+In the same graph, suppose we want to plot a regression line through the graphs instead of a horizontal line. The code to do that is as follows:
+
+
+```{r}
+xyplot(y~x|f, panel = function(x,y,...){
+  
+  panel.xyplot(x,y,...)
+  panel.lmline(x,y,col=2)
+
+})
+
+
+```
+
+
